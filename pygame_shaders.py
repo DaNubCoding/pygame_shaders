@@ -22,6 +22,8 @@ class Shader:
         
         self.display = display
         self.shader_data = {}
+        if target_texture is not None:
+            self.shader_data["u_texSize"] = [float(target_texture.get_width()), float(target_texture.get_height())]
         self.shader = shader_utils.create_shader(vertex_path, fragment_path, self.ctx)
         self.render_rect = screen_rect.ScreenRect(rect, display, self.ctx, self.shader)
 

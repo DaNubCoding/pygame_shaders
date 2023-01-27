@@ -2,39 +2,32 @@ import numpy as np
 import moderngl
 
 class ScreenRect:
-    def __init__(self, size, win_size, offset, ctx, program):
-        self.size = size
-        offset = (offset[0]/win_size[0], offset[1]/win_size[1])
-
-        self.current_w, self.current_h = win_size
-        
-        x = self.size[0] / self.current_w
-        y = self.size[1] / self.current_h
+    def __init__(self, rect, win_size, ctx, program):
+        size = rect[2] / win_size[0] * 2, rect[3] / win_size[1] * 2
+        pos = rect[0] / win_size[0] * 2 - 1, -rect[1] / win_size[1] * 2 + 1
 
         self.vertices = [
-            (-x + offset[0],  y + offset[1]),
-             (x + offset[0],  y + offset[1]),
-            (-x + offset[0], -y + offset[1]),
+            (pos[0], pos[1] - size[1]),
+            (pos[0] + size[0], pos[1] - size[1]),
+            (pos[0], pos[1]),
 
-           (-x + offset[0], -y + offset[1]),
-           (x + offset[0],  y + offset[1]),
-           (x + offset[0], -y + offset[1]),
+            (pos[0], pos[1]),
+            (pos[0] + size[0], pos[1] - size[1]),
+            (pos[0] + size[0], pos[1]),
         ]
         self.tex_coords = [
-           (0.0, 1.0),
-           (1.0, 1.0),
            (0.0, 0.0),
-
-           (0.0, 0.0),
-           (1.0, 1.0),
            (1.0, 0.0),
+           (0.0, 1.0),
+
+           (0.0, 1.0),
+           (1.0, 0.0),
+           (1.0, 1.0),
         ]
 
         self.vertices = np.array(self.vertices, dtype=np.float32)
         self.tex_coords = np.array(self.tex_coords, dtype=np.float32)
         self.data = np.hstack([self.vertices, self.tex_coords])
-
-        self.vertex_count = 6
 
         self.vbo = ctx.buffer(self.data)
 

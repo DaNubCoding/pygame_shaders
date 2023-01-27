@@ -11,7 +11,7 @@ def clear(color):
     ctx.clear(color=(color[0]/255, color[1]/255, color[2]/255))
 
 class Shader:
-    def __init__(self, size, display, pos, vertex_path, fragment_path, target_texture=None):
+    def __init__(self, rect, display, vertex_path, fragment_path, target_texture=None):
         global ctx
         if ctx is None:
             ctx = moderngl.create_context()
@@ -20,9 +20,10 @@ class Shader:
         ctx.enable(moderngl.BLEND)
         ctx.blend_func = ctx.SRC_ALPHA, ctx.ONE_MINUS_SRC_ALPHA
         
+        self.display = display
         self.shader_data = {}
         self.shader = shader_utils.create_shader(vertex_path, fragment_path, self.ctx)
-        self.render_rect = screen_rect.ScreenRect(size, display, pos, self.ctx, self.shader)
+        self.render_rect = screen_rect.ScreenRect(rect, display, self.ctx, self.shader)
 
         if target_texture is not None:
             s = pygame.Surface(target_texture.get_size())
@@ -48,3 +49,6 @@ class Shader:
                 self.shader[key].value = (data[0], data[1])
 
         self.render_rect.vao.render()
+
+    def update_rect(self, rect):
+        self.render_rect = screen_rect.ScreenRect(rect, self.display, self.ctx, self.shader)

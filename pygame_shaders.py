@@ -48,7 +48,10 @@ class Shader:
                 self.shader[key].value = data[0]
 
             elif len(data) == 2:
-                self.shader[key].value = (data[0], data[1])
+                try:
+                    self.shader[key].value = (data[0], data[1])
+                except KeyError:
+                    pass
 
         self.render_rect.vao.render()
 

@@ -26,6 +26,7 @@ class Shader:
             self.shader_data["u_texSize"] = [float(target_texture.get_width()), float(target_texture.get_height())]
         self.shader = shader_utils.create_shader(vertex_path, fragment_path, self.ctx)
         self.render_rect = screen_rect.ScreenRect(rect, display, self.ctx, self.shader)
+        self.tex_id = 1
 
         if target_texture is not None:
             s = pygame.Surface(target_texture.get_size())
@@ -33,14 +34,19 @@ class Shader:
         
     def send(self, name, data):
         if name in self.shader_data:
-            if [float(x) for x in data] == self.shader_data[name]:
+            if not isinstance(data[0], pygame.Surface) and [float(x) for x in data] == self.shader_data[name]:
                 return
+        if isinstance(data[0], pygame.Surface):
+            texture.Texture(data[0], self.ctx).use(self.tex_id)
+            self.shader_data[name] = [self.tex_id]
+            self.tex_id += 1
+            return
         self.shader_data[name] = [float(x) for x in data]
 
     def render(self, surface=None):
         if surface is not None:
             self.screen_texture.update(surface)
-            self.screen_texture.use()
+            self.screen_texture.use(0)
 
         for key in self.shader_data.keys():
             data = self.shader_data[key]

@@ -19,5 +19,5 @@ class Texture:
 
         self.texture.write(img_data)
 
-    def use(self):
-        self.texture.use()
+    def use(self, i):
+        self.texture.use(i)
